@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xjtu.mapper.MailMapper" >
+    <!--用户登录-->
+    <select id="selUser" resultType="com.xjtu.pojo.User">
+        select * from user where uname=#{0} and upwd=#{1}
+    </select>
+    <!--查询邮件发送记录-->
+    <resultMap id="rm" type="com.xjtu.pojo.Mail">
+        <id property="mid" column="mid"></id>
+        <result property="mtitle" column="mtitle"></result>
+        <result property="mcontent" column="mcontent"></result>
+        <result property="fileOldName" column="fileOldName"></result>
+        <result property="fileNewName" column="fileNewName"></result>
+        <result property="contentType" column="contentType"></result>
+        <result property="sendId" column="sendId"></result>
+        <result property="receiveId" column="receiveId"></result>
+        <result property="mTime" column="mTime"></result>
+        <association property="user" javaType="com.xjtu.pojo.User">
+            <id property="uid" column="sendId"></id>
+            <result property="uname" column="uname"></result>
+            <result property="upwd" column="upwd"></result>
+        </association>
+    </resultMap>
+    <select id="selMail" resultMap="rm">
+        select * from t_mail m join user u on m.sendId=u.uid where receiveId=#{0}
+    </select>
+    <!--插入发送邮件记录-->
+    <insert id="insMail" >
+        insert into t_mail values (default,#{mtitle},#{mcontent},#{fileOldName},#{fileNewName},#{contentType},#{sendId},#{receiveId},now())
+    </insert>
+</mapper>
